@@ -2,8 +2,8 @@ const express = require("express");
 const productServices = require("../services/services.Products");
 const router = express.Router();
 
-router.get("/", (req, res) => {
-    const products = productServices.getAllProducts(req, res);
+router.get("/", async (req, res) => {
+    const products = await productServices.getAllProducts(req, res);
 
     // si quieres devolver limit/offset aquí, los tienes que leer aquí también:
     const limit = Number(req.query.limit ?? 10);
@@ -17,24 +17,24 @@ router.get("/", (req, res) => {
     });
 });
 
-router.post("/", (req, res) => {
-    productServices.createnewProduct(req, res);
-    res.json('updateProduct').send('producto actualizado');
+router.post("/", async (req, res) => {
+    const createProduct = await productServices.createnewProduct(req, res)
+    return createProduct
 
 });
-router.delete("/:id", (req, res) => {
-    productServices.deleteProduct(req, res);
+router.delete("/:id", async (req, res) => {
+    const deleteProduct = await productServices.deleteProduct(req, res)
+    return deleteProduct
 })
-router.patch("/:id", (req, res) => {
-    const updateProduct = productServices.updateProduct(req, res);
+router.patch("/:id", async (req, res) => {
+    const updateProduct = await productServices.updateProduct(req, res)
+    return updateProduct
 });
 
-router.delete("/:id", (req, res) => {
-    productServices.deleteProduct(req, res);
-});
 
-router.get("/:id", (req, res) => {
-    productServices.getOneProduct(req, res);
+router.get("/:id", async (req, res) => {
+    const getOneProduct = await productServices.getOneProduct(req, res)
+    return getOneProduct
 });
 
 module.exports = router;
