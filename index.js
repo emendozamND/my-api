@@ -1,11 +1,15 @@
 const express = require("express");
+const { errorLogs, errorHandler } = require("./middleware/errorhandler");
 const apiRouter = require("./server");
+
 
 const app = express();
 const port = 3000;
 app.use(express.json())
 
 apiRouter(app);
+app.use(errorHandler);
+app.use(errorLogs)
 
 app.get("/", (req, res) => {
     res.send("Hola mundo desde mi ruta raiz");
