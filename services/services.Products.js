@@ -1,5 +1,5 @@
 const faker = require("faker");
-
+const boom = require('@hapi/boom')
 // GET /products?limit=10&offset=0
 const getAllProducts = async (req, res) => {
     try {
@@ -92,6 +92,9 @@ const deleteProduct = async (req, res) => {
 const updateProduct = async (req, res) => {
     try {
         const id = Number(req.params.id);
+        if (id <= 0) {
+            throw boom.notAcceptable('el id no puede ser menor o igual a 0')
+        }
         const body = req.body;
 
         if (!Number.isFinite(id) || id < 1) {
