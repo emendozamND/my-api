@@ -4,22 +4,31 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon index.js",
-    "start": "node.js",
-    "lint": "eslint"
+    "start": "node index.js",
+    "lint": "eslint",
+    "test": "mocha"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "autocannon": "^8.0.0",
+    "chai": "^6.2.2",
+    "chai-http": "^5.1.2",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
+    "mocha": "^11.7.5",
     "nodemon": "^3.1.11",
-    "prettier": "^3.7.4"
+    "prettier": "^3.7.4",
+    "supertest": "^7.1.4"
   },
   "dependencies": {
     "@hapi/boom": "^10.0.1",
-    "faker": "^5.5.3"
+    "express": "^5.2.1",
+    "faker": "^5.5.3",
+    "joi": "^18.0.2",
+    "uuid": "^13.0.0"
   }
 }

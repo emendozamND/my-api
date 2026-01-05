@@ -1,5 +1,6 @@
 const faker = require("faker");
 const boom = require('@hapi/boom')
+const { v4: uuidv4 } = require("uuid");
 // GET /products?limit=10&offset=0
 const getAllProducts = async (req, res) => {
     try {
@@ -48,74 +49,81 @@ const getAllProducts = async (req, res) => {
 
 // POST /products
 const createnewProduct = async (req, res) => {
-    try {
-        const body = req.body;
+  const body = req.body;
 
-        // Validación mínima (opcional)
-        if (!body || Object.keys(body).length === 0) {
-            return res.status(400).json({ ok: false, error: "Body vacío" });
-        }
+  if (!body || Object.keys(body).length === 0) {
+    return res.status(400).json({ ok: false, error: "Body vacío" });
+  }
 
-        console.log(body);
-        return res.status(201).json({
-            ok: true,
-            message: "Producto creado",
-            data: body,
-        });
-    } catch (error) {
-        console.error("createnewProduct error:", error);
-        return res.status(500).json({ ok: false, error: "Error interno al crear producto" });
-    }
+  const newProduct = { id: uuidv4(), ...body };
+
+  return res.status(201).json({
+    ok: true,
+    message: "Producto creado",
+    data: newProduct,
+  });
 };
 
 // DELETE /products/:id
 const deleteProduct = async (req, res) => {
-    try {
-        const id = Number(req.params.id);
+  try {
+    const { id } = req.params; // string
 
-        if (!Number.isFinite(id) || id < 1) {
-            return res.status(400).json({ ok: false, error: "ID inválido" });
-        }
-
-        return res.json({
-            ok: true,
-            message: "Producto eliminado",
-            id,
-        });
-    } catch (error) {
-        console.error("deleteProduct error:", error);
-        return res.status(500).json({ ok: false, error: "Error interno al eliminar producto" });
+    if (!id) {
+      return res.status(400).json({ ok: false, error: "ID inválido" });
     }
+
+    // (Opcional) Validar formato UUID (v4 o genérico)
+    const uuidRegex =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+    if (!uuidRegex.test(id)) {
+      return res.status(400).json({ ok: false, error: "ID no es UUID válido" });
+    }
+
+    return res.json({
+      ok: true,
+      message: "Producto eliminado",
+      id,
+    });
+  } catch (error) {
+    console.error("deleteProduct error:", error);
+    return res.status(500).json({ ok: false, error: "Error interno al eliminar producto" });
+  }
 };
+
 
 // PATCH /products/:id
 const updateProduct = async (req, res) => {
-    try {
-        const id = Number(req.params.id);
-        if (id <= 0) {
-            throw boom.notAcceptable('el id no puede ser menor o igual a 0')
-        }
-        const body = req.body;
+  try {
+    const { id } = req.params; // string UUID
+    const body = req.body;
 
-        if (!Number.isFinite(id) || id < 1) {
-            return res.status(400).json({ ok: false, error: "ID inválido" });
-        }
-
-        if (!body || Object.keys(body).length === 0) {
-            return res.status(400).json({ ok: false, error: "Body vacío" });
-        }
-
-        return res.json({
-            ok: true,
-            message: "Producto actualizado",
-            id,
-            product: body,
-        });
-    } catch (error) {
-        console.error("updateProduct error:", error);
-        return res.status(500).json({ ok: false, error: "Error interno al actualizar producto" });
+    if (!id) {
+      return res.status(400).json({ ok: false, error: "ID inválido" });
     }
+
+    // (Opcional) validar que sea UUID
+    const uuidRegex =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+    if (!uuidRegex.test(id)) {
+      return res.status(400).json({ ok: false, error: "ID no es UUID válido" });
+    }
+
+    const updated = { id, ...body };
+
+    return res.json({
+      ok: true,
+      message: "Producto actualizado",
+      data: updated,
+    });
+  } catch (error) {
+    console.error("updateProduct error:", error);
+    return res.status(500).json({ ok: false, error: "Error interno al actualizar producto" });
+  }
 };
+
 
 // GET /products/:id
 const getOneProduct = async (req, res) => {
